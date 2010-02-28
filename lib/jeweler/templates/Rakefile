@@ -2,6 +2,29 @@ require 'rubygems'
 <%= render_template 'bundler_setup.erb' %>
 require 'rake'
 
-<%= render_template 'jeweler_tasks.erb' %>
+<% rakefile_head_snippet_plugins.each do |plugin| %>
+<%= plugin.rakefile_head_snippet %>
+<% end %>
 
-<%= render_template 'other_tasks.erb' %>
+require 'jeweler'
+Jeweler::Tasks.new do |gem|
+  gem.name = "<%= project_name %>"
+  gem.summary = %Q{<%= summary %>}
+  gem.description = %Q{<%= description %>}
+  gem.email = "<%= user_email %>"
+  gem.homepage = "<%= homepage %>"
+  gem.authors = ["<%= user_name %>"]
+<% jeweler_task_snippet_plugins.each do |plugin| %>
+<%=  plugin.jeweler_task_snippet %>
+<% end %>
+
+  # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+end
+
+<% rakefile_snippet_plugins.each do |plugin| %>
+<% plugin.rakefile_snippets.each do |snippet| %>
+<%= snippet %>
+<% end %>
+<% end %>
+
+task :default => :<%= testing_framework_base.default_rake_task %>

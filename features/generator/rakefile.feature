@@ -135,7 +135,7 @@ Feature: generated Rakefile
 
   Scenario: shindo
     When I generate a shindo project named 'the-perfect-gem' that is 'zomg, so good'
-    And 'Rakefile' requires 'shindo/rake'
+    Then 'Rakefile' requires 'shindo/rake'
     And Rakefile instantiates a Shindo::Rake.new
     And Rakefile has "tests" as the default task
 
