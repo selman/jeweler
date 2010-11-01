@@ -23,7 +23,7 @@ require 'construct'
 require 'git'
 require 'time'
 
-$LOAD_PATH.unshift(File.dirname(__FILE__) + '/../lib')
+#$LOAD_PATH.unshift(File.dirname(__FILE__) + '/../lib')
 require 'jeweler'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))

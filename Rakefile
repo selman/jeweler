@@ -9,7 +9,7 @@ rescue Bundler::BundlerError => e
   exit e.status_code
 end
 
-$LOAD_PATH.unshift('lib')
+#$LOAD_PATH.unshift('lib')
 
 require 'rake'
 require 'jeweler'
@@ -48,25 +48,34 @@ namespace :test do
   end
 end
 
-require 'yard'
-YARD::Rake::YardocTask.new do |t|
-  t.files   = FileList['lib/**/*.rb'].exclude('lib/jeweler/templates/**/*.rb')
+begin
+  require 'yard'
+  YARD::Rake::YardocTask.new do |t|
+    t.files   = FileList['lib/**/*.rb'].exclude('lib/jeweler/templates/**/*.rb')
+  end
+rescue LoadError
 end
 
-require 'rcov/rcovtask'
-Rcov::RcovTask.new(:rcov => :check_dependencies) do |rcov|
-  rcov.libs << 'test'
-  rcov.pattern = 'test/**/test_*.rb'
+begin
+  require 'rcov/rcovtask'
+  Rcov::RcovTask.new(:rcov => :check_dependencies) do |rcov|
+    rcov.libs << 'test'
+    rcov.pattern = 'test/**/test_*.rb'
+  end
+rescue LoadError
 end
 
-require 'cucumber/rake/task'
-Cucumber::Rake::Task.new(:features) do |features|
-  features.cucumber_opts = "features --format progress"
-end
-namespace :features do
-  Cucumber::Rake::Task.new(:pretty) do |features|
+begin
+  require 'cucumber/rake/task'
+  Cucumber::Rake::Task.new(:features) do |features|
     features.cucumber_opts = "features --format progress"
   end
+  namespace :features do
+    Cucumber::Rake::Task.new(:pretty) do |features|
+      features.cucumber_opts = "features --format progress"
+    end
+  end
+rescue LoadError
 end
 
 if ENV["RUN_CODE_RUN"] == "true"
