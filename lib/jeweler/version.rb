@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   module Version
     MAJOR = 1
     MINOR = 5
@@ -7,4 +7,4 @@ class Jeweler
 
     STRING = [MAJOR, MINOR, PATCH, BUILD].compact.join('.')
   end
-end
+end # module Jeweler

@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     class Application
       class << self
@@ -32,6 +32,6 @@ class Jeweler
         end
       end
 
-    end
-  end
-end
+    end # class Application
+  end # class Generator
+end # module Jeweler

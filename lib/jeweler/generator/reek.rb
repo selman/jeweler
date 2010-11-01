@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     class Reek < Plugin
 
@@ -13,9 +13,9 @@ class Jeweler
 
         development_dependencies << ["reek", ">= 0"] 
       end
-    end
-  end
-end
+    end # class Reek
+  end # class Generator
+end # module Jeweler
 __END__
 @@ rakefile_snippet
 require 'reek/adapters/rake_task'

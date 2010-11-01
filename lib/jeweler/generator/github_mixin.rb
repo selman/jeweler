@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     module GithubMixin
       def self.extended(generator)
@@ -24,6 +24,6 @@ class Jeweler
       def homepage
         @homepage ||= "http://github.com/#{github_username}/#{project_name}"
       end
-    end
-  end
-end
+    end # module GithubMixin
+  end # class Generator
+end # module Jeweler

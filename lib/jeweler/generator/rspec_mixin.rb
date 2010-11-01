@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     module RspecMixin
       def self.extended(generator)
@@ -37,6 +37,6 @@ class Jeweler
         "spec_helper.rb"
       end
 
-    end
-  end
-end
+    end # module RspecMixin
+  end # class Generator
+end # module Jeweler

@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     class Plugin
       include Thor::Base
@@ -66,6 +66,6 @@ class Jeweler
       def self.class_option(name, options)
         Generator.class_option(name, options)
       end
-    end
-  end
-end
+    end # class Plugin
+  end # class Generator
+end # module Jeweler

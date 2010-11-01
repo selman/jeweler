@@ -12,7 +12,7 @@ require 'thor/actions/git_init'
 require 'thor/actions/git_remote'
 require 'thor/actions/github_repo'
 
-class Jeweler
+module Jeweler
   class NoGitUserName < StandardError
   end
   class NoGitUserEmail < StandardError
@@ -32,7 +32,6 @@ class Jeweler
   class Generator < Thor::Group
     include Thor::Actions
 
-    require 'jeweler/generator/options'
     require 'jeweler/generator/application'
 
     require 'jeweler/generator/github_mixin'
@@ -40,14 +39,12 @@ class Jeweler
     require 'jeweler/generator/plugin'
 
     require 'jeweler/generator/default'
-    require 'jeweler/generator/bundler'
     require 'jeweler/generator/documentation_frameworks'
     require 'jeweler/generator/testing_frameworks'
     require 'jeweler/generator/cucumber'
     require 'jeweler/generator/reek'
     require 'jeweler/generator/roodi'
     require 'jeweler/generator/git_vcs'
-    require 'jeweler/generator/rubyforge'
 
     attr_accessor :user_name, :user_email, :summary, :homepage,
                   :description, :project_name, :github_username, :github_token,
@@ -119,9 +116,7 @@ class Jeweler
       self.testing_framework_base = TestingFramework.klass(options[:testing_framework]).new(self)
       documentation_framework_base = DocumentationFrameworks.klass(options[:documentation_framework]).new(self)
 
-      plugins << Bundler.new(self)
       plugins << Default.new(self)
-      plugins << Rubyforge.new(self) if options[:rubyforge]
       plugins << self.testing_framework_base
       plugins << documentation_framework_base
       plugins << Cucumber.new(self, testing_framework_base) if options[:cucumber]
@@ -205,5 +200,5 @@ class Jeweler
     def source_root
       self.class.source_root
     end
-  end
-end
+  end # class Generator
+end # module Jeweler

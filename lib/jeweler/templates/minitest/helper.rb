@@ -1,5 +1,4 @@
 require 'rubygems'
-<%= render_template 'bundler_setup.erb' %>
 require 'minitest/unit'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))

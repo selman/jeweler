@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     class Cucumber < Plugin
 
@@ -27,9 +27,9 @@ class Jeweler
         testing_framework.send(meth, *args, &block)
       end
 
-    end
-  end
-end
+    end # class Cucumber
+  end # class Generator
+end # module Jeweler
 __END__
 @@ rakefile_snippet
 require 'cucumber/rake/task'

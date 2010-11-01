@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     module DocumentationFrameworks
       Generator.class_option :documentation_framework, :type => :string, :default => 'rdoc',
@@ -34,9 +34,9 @@ class Jeweler
           rakefile_snippets << lookup_inline_template(:rdoc_rakefile_snippet)
         end
       end
-    end
-  end
-end
+    end # module DocumentationFrameworks
+  end # class Generator
+end # module Jeweler
 __END__
 @@ yard_rakefile_snippet
 require 'yard'

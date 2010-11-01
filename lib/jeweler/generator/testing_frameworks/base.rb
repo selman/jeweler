@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     module TestingFrameworks
       class Base < Plugin
@@ -20,4 +20,4 @@ class Jeweler
       end
     end
   end
-end
+end # module Jeweler

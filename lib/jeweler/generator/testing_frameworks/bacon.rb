@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     module TestingFrameworks
       class Bacon < Base
@@ -36,7 +36,7 @@ class Jeweler
       end
     end
   end
-end
+end # module Jeweler
 __END__
 @@ rakefile_snippet
 require 'rake/testtask'

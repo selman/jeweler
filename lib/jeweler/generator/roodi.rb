@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     class Roodi < Plugin
 
@@ -13,9 +13,9 @@ class Jeweler
 
         development_dependencies <<  ["roodi", ">= 0"]
       end
-    end
-  end
-end
+    end # class Roodi
+  end # class Generator
+end # module Jeweler
 __END__
 @@ rakefile_snippet
 require 'roodi'

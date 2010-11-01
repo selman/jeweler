@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     module TestingFramework
       Generator.class_option :testing_framework, :type => :string, :default => 'shoulda',
@@ -24,6 +24,6 @@ class Jeweler
           raise ArgumentError, "Using #{testing_framework} requires a #{testing_framework_class_name} to be defined"
         end
       end
-    end
-  end
-end
+    end # module TestingFramework
+  end # class Generator
+end # module Jeweler

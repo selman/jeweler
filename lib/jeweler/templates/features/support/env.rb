@@ -1,5 +1,3 @@
-<%= render_template 'bundler_setup.erb' %>
-
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../../lib')
 require '<%= require_name %>'
 

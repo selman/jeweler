@@ -1,4 +1,4 @@
-class Jeweler
+module Jeweler
   class Generator
     module TestingFrameworks
       class Rspec < Base
@@ -51,7 +51,7 @@ class Jeweler
       end
     end
   end
-end
+end # module Jeweler
 __END__
 @@ rakefile_snippet
 require 'spec/rake/spectask'
