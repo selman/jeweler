@@ -66,30 +66,9 @@ class Jeweler
     @gemspec.version || @version_helper.to_s
   end
 
-  # Writes out the gemspec
-  def write_gemspec
-    Jeweler::Commands::WriteGemspec.build_for(self).run
-  end
-
-  # Validates the project's gemspec from disk in an environment similar to how 
-  # GitHub would build from it. See http://gist.github.com/16215
-  def validate_gemspec
-    Jeweler::Commands::ValidateGemspec.build_for(self).run
-  end
-
   # is the project's gemspec from disk valid?
   def valid_gemspec?
     gemspec_helper.valid?
-  end
-
-  # Build a gem using the project's latest Gem::Specification
-  def build_gem
-    Jeweler::Commands::BuildGem.build_for(self).run
-  end
-
-  # Install a previously built gem
-  def install_gem
-    Jeweler::Commands::InstallGem.build_for(self).run
   end
 
   # Bumps the patch version.
@@ -128,27 +107,12 @@ class Jeweler
     Jeweler::Commands::ReleaseGemspec.build_for(self).run
   end
 
-  def release_to_git
-    Jeweler::Commands::ReleaseToGit.build_for(self).run
-  end
-
-  def release_gem_to_rubygems
-    Jeweler::Commands::ReleaseToRubygems.build_for(self).run
-  end
-
   def release_gem_to_rubyforge
     # no-op
   end
 
   def setup_rubyforge
     # no-op
-  end
-
-  def check_dependencies(type = nil)
-    command = Jeweler::Commands::CheckDependencies.build_for(self)
-    command.type = type
-
-    command.run
   end
 
   def git_base_dir(base_dir = nil)
