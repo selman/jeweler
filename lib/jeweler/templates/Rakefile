@@ -1,6 +1,10 @@
 require "bundler/setup"
-require 'jeweler/tasks'
-Jeweler::Tasks.install_tasks
+begin
+  require 'jeweler/tasks'
+  Jeweler::Tasks.install_tasks
+rescue LoadError
+  Bundler::GemHelper.install_tasks
+end
 
 <% rakefile_head_snippet_plugins.each do |plugin| %>
 <%= plugin.rakefile_head_snippet %>

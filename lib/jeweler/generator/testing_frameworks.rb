@@ -10,6 +10,7 @@ module Jeweler
       require 'jeweler/generator/testing_frameworks/micronaut'
       require 'jeweler/generator/testing_frameworks/minitest'
       require 'jeweler/generator/testing_frameworks/rspec'
+      require 'jeweler/generator/testing_frameworks/rspec1'
       require 'jeweler/generator/testing_frameworks/shoulda'
       require 'jeweler/generator/testing_frameworks/testspec'
       require 'jeweler/generator/testing_frameworks/testunit'

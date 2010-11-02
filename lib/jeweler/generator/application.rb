@@ -3,6 +3,7 @@ module Jeweler
     class Application
       class << self
         def run!(*arguments)
+          arguments << '--help' if arguments.empty?
           env_args = if ENV['JEWELER_OPTS']
                        ENV['JEWELER_OPTS'].split(' ')
                      else

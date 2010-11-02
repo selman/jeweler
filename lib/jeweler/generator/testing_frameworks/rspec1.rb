@@ -1,18 +1,20 @@
 module Jeweler
   class Generator
     module TestingFrameworks
-      class Rspec < Base
+      class Rspec1 < Base
         def initialize(generator)
           super
+
           use_inline_templates! __FILE__
+
           rakefile_snippets << lookup_inline_template(:rakefile_snippet)
-          development_dependencies << ["rspec", "~> 2.0.0"]
+          development_dependencies << ["rspec", "~> 1.3.0"]
         end
 
         def run
           super
 
-          template 'rspec/.rspec', '.rspec'
+          template 'rspec1/spec.opts', 'spec/spec.opts'
         end
 
         def default_rake_task
@@ -20,7 +22,7 @@ module Jeweler
         end
 
         def feature_support_require
-          'rspec/expectations'
+          'spec/expectations'
         end
 
         def feature_support_extend
@@ -46,18 +48,20 @@ module Jeweler
         def test_helper_filename
           "spec_helper.rb"
         end
-      end # class Rspec
+      end # class Rspec1
     end # module TestingFrameworks
   end # class Generator
 end # module Jeweler
 __END__
 @@ rakefile_snippet
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.rspec_opts = %w(--color)
-  spec.ruby_opts  = %w(-w)
+require 'spec/rake/spectask'
+Spec::Rake::SpecTask.new(:spec) do |spec|
+  spec.libs << 'lib' << 'spec'
+  spec.pattern = 'spec/**/*_spec.rb'
 end
 
-RSpec::Core::RakeTask.new(:rcov) do |spec|
+Spec::Rake::SpecTask.new(:rcov) do |spec|
+  spec.libs << 'lib' << 'spec'
+  spec.pattern = 'spec/**/*_spec.rb'
   spec.rcov = true
 end
