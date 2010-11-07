@@ -1,204 +1,150 @@
-require 'git'
-require 'erb'
-
-require 'net/http'
-require 'uri'
-
-require 'thor'
 require 'thor/group'
-require 'pathname'
-
-require 'thor/actions/git_init'
-require 'thor/actions/git_remote'
-require 'thor/actions/github_repo'
+require 'jeweler/plugin'
+require 'jeweler/application'
 
 module Jeweler
-  class NoGitUserName < StandardError
+  class << self
+    def git_config value
+      `git config #{value}`.chomp
+    end
   end
-  class NoGitUserEmail < StandardError
-  end
-  class FileInTheWay < StandardError
-  end
-  class NoGitHubRepoNameGiven < StandardError
-  end
-  class NoGitHubUser < StandardError
-  end
-  class NoGitHubToken < StandardError
-  end
-  class GitInitFailed < StandardError
-  end    
 
-  # Generator for creating a jeweler-enabled project
   class Generator < Thor::Group
     include Thor::Actions
 
-    require 'jeweler/generator/application'
+    desc "e.g. jeweler the-perfect-gem"
 
-    require 'jeweler/generator/github_mixin'
+    argument :project, :required => true, :banner => 'gem_project'
 
-    require 'jeweler/generator/plugin'
+    # gem info
+    class_option :user_name, :group => 'gem info', :type => :string,
+    :default => Jeweler::git_config('user.name'),
+    :desc =>  "the user's name, credited in the LICENSE"
 
-    require 'jeweler/generator/default'
-    require 'jeweler/generator/documentation_frameworks'
-    require 'jeweler/generator/testing_frameworks'
-    require 'jeweler/generator/cucumber'
-    require 'jeweler/generator/reek'
-    require 'jeweler/generator/roodi'
-    require 'jeweler/generator/git_vcs'
+    class_option :user_email, :group => 'gem info', :type => :string,
+    :default => Jeweler::git_config('user.email'),
+    :desc => "the user's email, ie that is credited in the Gem specification"
 
-    attr_accessor :user_name, :user_email, :summary, :homepage,
-                  :description, :project_name, :github_username, :github_token,
-                  :repo, :should_create_remote_repo, 
-                  :testing_framework_base,
-                  :git_remote,
-                  :plugins
+    class_option :homepage, :group => 'gem info', :type => :string,
+    :desc => "the homepage for your project (defaults to the GitHub repo)"
 
-    argument :directory, :required => true
+    class_option :summary, :group => 'gem info', :type => :string,
+    :default => 'TODO: one-line summary of your gem',
+    :desc => 'one-line summary of your gem'
 
-    class_option :summary, :type => :string, :default => 'TODO: one-line summary of your gem',
-      :desc => 'one-line summary of your gem'
-    class_option :homepage, :type => :string,
-      :desc => "the homepage for your project (defaults to the GitHub repo)"
-    class_option :description, :type => :string, :default => 'TODO: longer description of your gem' ,
-      :desc => 'longer description of your gem'
+    class_option :description, :group => 'gem info', :type => :string,
+    :default => 'TODO: longer description of your gem',
+    :desc => 'longer description of your gem'
 
-    class_option :user_name, :type => :string,
-      :desc => "the user's name, credited in the LICENSE"
-    class_option :user_email, :type => :string,
-      :desc => "the user's email, ie that is credited in the Gem specification"
+    # git info group
+    class_option :github_user, :group => 'git info', :type => :string,
+    :default => Jeweler::git_config('github.user'),
+    :desc => "name of the user on GitHub to set the project up under"
 
-    class_option :github_username, :type => :string,
-      :desc => "name of the user on GitHub to set the project up under"
-    class_option :github_token, :type => :string,
-      :desc => "GitHub token to use for interacting with the GitHub API"
-    class_option :git_remote, :type => :string,
-      :desc => 'URI to use for git origin remote'
-    class_option :create_repo, :type => :boolean, :default => false,
-      :desc => 'create a repository on GitHub'
+    class_option :github_token, :group => 'git info', :type => :string,
+    :default => Jeweler::git_config('github.token'),
+    :desc => "GitHub token to use for interacting with the GitHub API"
 
-    def initialize(args = [], opts = {}, config = {})
-      # next section yanked from Thor::Base, because apparently Thor::Group will pass in opts as an array
-      # This is mostly a workaround so we can use `git config` as a default for some values
-      parse_options = self.class.class_options
-      array_options = hash_opts = nil
-      if opts.is_a?(Array)
-        task_options  = config.delete(:task_options) # hook for start
-        parse_options = parse_options.merge(task_options) if task_options
-        array_options, hash_options = opts, {}
-      else
-        array_options, hash_options = [], opts
-      end
-      opts = Thor::Options.parse(parse_options, array_options).dup
+    class_option :create_github_repo, :aliases => '-g', :group => 'git info', :type => :boolean,
+    :default => false,
+    :desc => "create the repository on GitHub"
 
-      git_config = Git.global_config
-      opts[:user_name]       ||= git_config['user.name']
-      opts[:user_email]      ||= git_config['user.email']
-      opts[:github_username] ||= git_config['github.user']
-      opts[:github_token]    ||= git_config['github.token']
+    # bdd group
+    class_option :testing, :aliases => '-t', :group => 'bdd', :type => :string,
+    :banner => '[bacon|minitest|riot|rspec|rspec1|shoulda|testspec|testunit]',
+    :default => 'shoulda',
+    :desc => 'testing framework to generate'
 
-      super
+    class_option :cucumber, :aliases => '-c', :group => 'bdd', :type => :boolean,
+    :default => false,
+    :desc => 'generate cucumber stories in addition to other tests'
 
-      self.destination_root         = Pathname.new(directory).expand_path
-      self.project_name = Pathname.new(self.destination_root).basename.to_s
+    # documentation group
+    class_option :documentation, :aliases => '-d', :group => 'documentation',  :type => :string,
+    :banner => '[rdoc|yard]', :default => 'rdoc',
+    :desc => 'documentation framework to generate'
 
-      self.summary      = options[:summary] 
-      self.description  = options[:description]
-      self.user_name    = options[:user_name]
-      self.user_email   = options[:user_email]
-      self.homepage     = options[:homepage]
-      self.git_remote   = options[:git_remote]
+    # code metrics group
+    class_option :code_metrics, :aliases => '-m', :group => 'code metrics',  :type => :array,
+    :banner => 'reek roodi',
+    :desc => 'code metrics you can choose many'
 
-      raise NoGitUserName unless self.user_name
-      raise NoGitUserEmail unless self.user_email
-
-      self.plugins                  = []
-
-      self.testing_framework_base = TestingFramework.klass(options[:testing_framework]).new(self)
-      documentation_framework_base = DocumentationFrameworks.klass(options[:documentation_framework]).new(self)
-
-      plugins << Default.new(self)
-      plugins << self.testing_framework_base
-      plugins << documentation_framework_base
-      plugins << Cucumber.new(self, testing_framework_base) if options[:cucumber]
-      plugins << Reek.new(self) if options[:reek]
-      plugins << Roodi.new(self) if options[:roodi]
-      plugins << GitVcs.new(self)
-
-      extend GithubMixin
+    def self.source_root
+      File.expand_path('../templates', __FILE__)
     end
 
-    def generate
-      plugins.each do |plugin|
-        plugin.run
-      end
-
-      if options[:create_repo]
-        github_repo :login => options[:github_username],
-                    :token => options[:github_token],
-                    :description => options[:description],
-                    :name => options[:project_name]
-      end
-    end
-
-    no_tasks do
-
-      def constant_name
-        self.project_name.split(/[-_]/).collect{|each| each.capitalize }.join
-      end
-
-      def require_name
-        self.project_name
-      end
-
-      def file_name_prefix
-        self.project_name.gsub('-', '_')
-      end
-
-      def rakefile_head_snippet_plugins
-        plugins.select {|plugin| plugin.rakefile_head_snippet }
-      end
-
-      def rakefile_snippet_plugins
-        plugins.reject {|plugin| plugin.rakefile_snippets.empty? }
-      end
-
-      def jeweler_task_snippet_plugins
-        plugins.select {|plugin| plugin.jeweler_task_snippet }
-      end
-
-      def plugins_with_development_dependencies
-        plugins.reject {|plugin| plugin.development_dependencies.empty? }
-      end
-
-      def development_dependencies
-        plugins_with_development_dependencies.inject([]) do |acc, plugin|
-          acc.concat(plugin.development_dependencies)
+    def check_github_options
+      if options[:create_github_repo]
+        unless options[:github_user] || options[:github_token]
+          raise "You must configure your Github user & token"
+          exit
         end
       end
     end
 
-  protected
+    def generate_args_opts
+      return if options.empty?
 
-  private
+      args = %w(default)
+      opts = options.dup
 
-    def render_erb(source)
-      template          = ERB.new(source, nil, '<>')
+      args << opts[:testing] && opts.delete(:testing) if opts[:testing]
+      args << 'cucumber' && opts.delete(:cucumber) if opts[:cucumber]
+      args << opts[:documentation] && opts.delete(:documentation) if opts[:documentation]
+      args.push(*opts[:code_metrics]) && opts.delete(:code_metrics) if opts[:code_metrics]
+      puts args.inspect
 
-      # squish extraneous whitespace from some of the conditionals
-      template.result(binding).gsub(/\n\n\n+/, "\n\n")
+      opts.merge!({
+                    :project_name => project,
+                    :constant_name =>
+                    project.split(/[-_]/).collect {|each| each.capitalize }.join
+                  })
+
+      run_plugins args, opts
     end
 
-    def render_template(source)
-      template_contents = File.read(File.join(source_root, source))
-      render_erb(template_contents)
+    def git_actions
+      inside(project) do
+        say "Initializing git"
+        run "git init"
+
+        if options[:create_github_repo]
+          require 'net/http'
+
+          Net::HTTP.post_form URI.parse('http://github.com/api/v2/yaml/repos/create'),
+          'login' => options[:github_user],
+          'token' => options[:github_token],
+          'description' => options[:description],
+          'name' => project
+
+          run "git remote add origin git@github.com:#{options[:github_user]}/#{project}.git"
+        end
+      end
     end
 
-    def self.source_root
-      File.join(File.dirname(__FILE__), 'templates')
+    no_tasks do
+      def template2(source, *args)
+        config = args.last.is_a?(Hash) ? args.pop : {}
+        destination = args.first || source
+        destination = File.expand_path("../#{destination}", __FILE__)
+
+        if File.exists?(destination)
+          append_file destination, source, config
+        else
+          create_file destination, source, config
+        end
+      end
+
+      def run_plugins args, opts
+        plugins = Plugin::generate(args, opts)
+        plugins.each do |plugin|
+          say "#{plugin.class.name} tasks running", :red
+          plugin.each do |k, v|
+            template2(v, "#{project}/#{k.gsub(/newgem/, project)}")
+          end
+        end
+      end
     end
 
-    def source_root
-      self.class.source_root
-    end
   end # class Generator
 end # module Jeweler

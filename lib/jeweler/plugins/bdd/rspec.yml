@@ -1,0 +1,43 @@
+--- 
+development_dependencies:
+- - rspec
+  - "~> 2.0.0"
+Rakefile: |
+  task :default => :spec
+
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new(:spec) do |spec|
+    spec.rspec_opts = %w(--color)
+    spec.ruby_opts  = %w(-w)
+  end
+  
+  RSpec::Core::RakeTask.new(:rcov) do |spec|
+    spec.rcov = true
+  end
+.rspec: |
+  --color
+spec/spec_helper.rb: |
+  require '<%= project_name %>'
+  require 'rspec'
+
+  # Requires supporting files with custom matchers and macros, etc,
+  # in ./support/ and its subdirectories.
+  Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
+  
+  RSpec.configure do |config|
+  
+  end
+spec/newgem_spec.rb: |
+  require File.expand_path('../spec_helper', __FILE__)
+  
+  describe "<%= constant_name %>" do
+    it "fails" do
+      fail "hey buddy, you should probably rename this file and start specing for real"
+    end
+  end
+features/support/env.rb: |
+  require '<%= project_name %>'
+  
+  require 'rspec/expectations'
+  
+  World()

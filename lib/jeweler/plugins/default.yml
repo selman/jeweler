@@ -1,0 +1,134 @@
+---
+development_dependencies:
+- - jeweler
+  - "~> 1.5.0"
+- - rcov
+  - "~> 0.9.0"
+.gitignore: |
+  # rcov generated
+  coverage
+  
+  # rdoc generated
+  rdoc
+  
+  # yard generated
+  doc
+  .yardoc
+  
+  # bundler
+  .bundle
+  
+  # jeweler generated
+  pkg
+  
+  # Have editor/IDE/OS specific files you need to ignore? Consider using a global gitignore: 
+  #
+  # * Create a file at ~/.gitignore
+  # * Include files you want ignored
+  # * Run: git config --global core.excludesfile ~/.gitignore
+  #
+  # After doing this, these files will be ignored in all your git projects,
+  # saving you from having to 'pollute' every project you touch with them
+  #
+  # Not sure what to needs to be ignored for particular editors/OSes? Here's some ideas to get you started. (Remember, remove the leading # of the line)
+  #
+  # For MacOS:
+  #
+  #.DS_Store
+  #
+  # For TextMate
+  #*.tmproj
+  #tmtags
+  #
+  # For emacs:
+  #*~
+  #\#*
+  #.\#*
+  #
+  # For vim:
+  #*.swp
+Gemfile: |
+  source "http://rubygems.org"
+  
+  gemspec
+Rakefile: |
+  require "bundler/setup"
+  begin
+    require 'jeweler/tasks'
+    Jeweler::Tasks.install_tasks
+  rescue LoadError
+    Bundler::GemHelper.install_tasks
+  end
+LICENSE: |
+  Copyright (c) <%= Time.now.year %> <%= user_name %>
+  
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+  
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+  
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+README.rdoc: |
+  = <%= project_name %>
+  
+  Description goes here.
+  
+  == Contributing to <%= project_name %>
+  
+  * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
+  * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
+  * Fork the project
+  * Start a feature/bugfix branch
+  * Commit and push until you are happy with your contribution
+  * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
+  * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+  
+  == Copyright
+
+  Copyright (c) <%= Time.now.year %> <%= user_name %>. See LICENSE for
+  further details.
+newgem.gemspec: |
+  # -*- encoding: utf-8 -*-
+  $:.push File.expand_path("../lib", __FILE__)
+  require "<%= project_name %>/version"
+  
+  Gem::Specification.new do |s|
+    s.name        = "<%= project_name %>"
+    s.version     = <%= constant_name %>::VERSION
+    s.platform    = Gem::Platform::RUBY
+    s.authors     = ["<%= user_name %>"]
+    s.email       = ["<%= user_email %>"]
+    s.homepage    = "<%= "http://github.com/#{github_user}/#{project_name}" %>"
+    s.summary     = %q{<%=summary%>}
+    s.description = %q{<%= description %>}
+    
+    s.rubyforge_project = "<%= project_name %>"
+    <%development_dependencies.each do |gem, version|%>
+    s.add_development_dependency('<%= gem %>', '<%= version %>')
+    <%end%>
+    
+    s.files         = `git ls-files`.split("\n")
+    s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+    s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+    s.require_paths = ["lib"]
+  end
+lib/newgem.rb: |
+  module <%=constant_name%>
+  # write your code here
+  end # module <%=constant_name%>
+lib/newgem/version.rb: |
+  module <%=constant_name%>
+    VERSION = "0.1.0"
+  end # module <%=constant_name%>

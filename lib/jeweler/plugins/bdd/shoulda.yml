@@ -1,0 +1,45 @@
+--- 
+development_dependencies:
+- - shoulda
+  - "~> 2.11.0"
+Rakefile: |
+  task :default => :test
+
+  require 'rake/testtask'
+  Rake::TestTask.new do |test|
+    test.libs << 'test'
+    test.test_files = FileList.new('test/**/test_*.rb')
+    test.verbose = true
+  end
+  
+  begin
+    require 'rcov/rcovtask'
+    Rcov::RcovTask.new do |rcov|
+      rcov.libs << 'test'
+      rcov.test_files = FileList.new('test/**/test_*.rb')
+      rcov.verbose = true
+    end
+  rescue LoadError
+  end
+test/helper.rb: |
+  require '<%= project_name %>'
+  require 'test/unit'
+  require 'shoulda'
+
+  class Test::Unit::TestCase
+  
+  end
+test/test_newgem.rb: |
+  require File.expand_path('../helper', __FILE__)
+  
+  class Test<%= constant_name %> < Test::Unit::TestCase
+    should "probably rename this file and start testing for real" do
+      flunk "hey buddy, you should probably rename this file and start testing for real"
+    end
+  end
+features/support/env.rb: |
+  require '<%= project_name %>'
+  
+  require 'test/unit/assertions'
+  
+  World(Test::Unit::Assertions)

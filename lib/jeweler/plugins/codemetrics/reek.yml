@@ -1,0 +1,7 @@
+--- 
+development_dependencies:
+- - reek
+  - "~> 1.2.0"
+Rakefile: |
+  require 'reek/rake/task'
+  Reek::Rake::Task.new

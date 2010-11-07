@@ -1,5 +1,5 @@
 require "bundler/setup"
-require 'jeweler/tasks'
+require 'jeweler'
 Jeweler::Tasks.install_tasks
 
 require 'rake/testtask'

@@ -1,0 +1,29 @@
+--- 
+development_dependencies:
+- - cucumber
+  - "~> 0.9.0"
+Rakefile: |
+  require 'cucumber/rake/task'
+  Cucumber::Rake::Task.new(:features)
+features/newgem.feature: |
+  Feature: something something
+  In order to something something
+  A user something something
+  something something something
+  
+  Scenario: something something
+    Given inspiration
+    When I create a sweet newgem
+    Then everyone should see how awesome I am
+features/step_definitions/newgem_steps.rb: |
+  Given /^(\w+)$/ do |inspiration|
+
+  end
+  
+  When /^I (\w+) a sweet (\w+)$/ do |action, variable|
+  
+  end
+
+  Then /^everyone should see how (\w+) I am$/ do |result|
+  
+  end

@@ -1,0 +1,13 @@
+--- 
+development_dependencies:
+- - yard
+  - "~> 0.6.0"
+.document: |
+  lib/**/*.rb
+  bin/*
+  - 
+  features/**/*.feature
+  LICENSE
+Rakefile: |
+  require 'yard'
+  YARD::Rake::YardocTask.new

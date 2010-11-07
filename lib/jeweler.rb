@@ -5,5 +5,6 @@
 # * http://wiki.github.com/technicalpickles/jeweler/create-a-new-project
 # * http://wiki.github.com/technicalpickles/jeweler/configure-an-existing-project
 module Jeweler
-
+  autoload :Generator, 'jeweler/generator'
+  autoload :Tasks,     'jeweler/tasks'
 end # module Jeweler
