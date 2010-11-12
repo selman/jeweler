@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
 require 'jeweler'
-
-exit Jeweler::Generator::Application.run!(*ARGV)
+Jeweler::Generator.start(ARGV)
+#exit Jeweler::Generator::Application.run!(*ARGV)

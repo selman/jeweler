@@ -21,10 +21,8 @@ module Jeweler
 
   class Tasks < Bundler::GemHelper
 
-    alias bundler_task_install install
-
     def install
-      bundler_task_install
+      super
 
       desc "Start IRB with all runtime dependencies loaded"
       task :console, [:script] do |t,args|

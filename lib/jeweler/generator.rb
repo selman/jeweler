@@ -88,11 +88,10 @@ module Jeweler
       args = %w(default)
       opts = options.dup
 
-      args << opts[:testing] && opts.delete(:testing) if opts[:testing]
-      args << 'cucumber' && opts.delete(:cucumber) if opts[:cucumber]
-      args << opts[:documentation] && opts.delete(:documentation) if opts[:documentation]
-      args.push(*opts[:code_metrics]) && opts.delete(:code_metrics) if opts[:code_metrics]
-      puts args.inspect
+      args << opts[:testing]          #if opts[:testing]
+      args << opts[:documentation]    #if opts[:documentation]
+      args << 'cucumber'              if opts[:cucumber]
+      args.push(*opts[:code_metrics]) if opts[:code_metrics]
 
       opts.merge!({
                     :project_name => project,
@@ -105,7 +104,7 @@ module Jeweler
 
     def git_actions
       inside(project) do
-        say "Initializing git"
+        say "Initializing git", :red
         run "git init"
 
         if options[:create_github_repo]
@@ -126,7 +125,6 @@ module Jeweler
       def template2(source, *args)
         config = args.last.is_a?(Hash) ? args.pop : {}
         destination = args.first || source
-        destination = File.expand_path("../#{destination}", __FILE__)
 
         if File.exists?(destination)
           append_file destination, source, config
@@ -136,12 +134,11 @@ module Jeweler
       end
 
       def run_plugins args, opts
+        project_path = Pathname.new(project).expand_path
         plugins = Plugin::generate(args, opts)
-        plugins.each do |plugin|
-          say "#{plugin.class.name} tasks running", :red
-          plugin.each do |k, v|
-            template2(v, "#{project}/#{k.gsub(/newgem/, project)}")
-          end
+        plugins.each do |target, template|
+          #say "#{name} tasks running", :red
+          template2(template, "#{project_path}/#{target.gsub(/newgem/, project)}")
         end
       end
     end

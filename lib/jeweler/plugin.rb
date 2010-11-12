@@ -7,14 +7,17 @@ PLUGIN_FILES = Dir["#{PLUGIN_PATH}/**/*.yml"]
 class Plugin
   def initialize opts = nil
     if opts
-      opts.each_pair do |k,v|
+      opts.each_pair do |k, v|
         instance_variable_set(('@' + k).to_sym, v)
+        self.class.send :attr_reader, k
       end
     end
   end
 
   def self.generate args=[], opts={}
-    plugins = []
+    @@templates = {}
+    @@development_dependencies = []
+
     args.each do |file|
       file_path = PLUGIN_FILES.select { |s| s =~ %r/.*\/#{file}\.yml$/ }.first
 
@@ -23,28 +26,18 @@ class Plugin
       templates.delete('development_dependencies')
       templates.delete_if {|k, v| k =~ /features.*/} unless args.include?("cucumber")
       
-      klass = Object.const_set(file.capitalize, Class.new(Plugin))
-      klass.module_eval do
-        @@templates ||= {}
-        @@templates[file.capitalize] = templates
-
-        @@development_dependencies ||= []
-        (@@development_dependencies += development_dependencies).uniq! if development_dependencies
-      end
-
-      opts.keys.each do |k|
-        klass.send :attr_reader, k
-      end
-
-      plugins << klass.new(opts)
+      @@templates[file.capitalize] = templates
+      (@@development_dependencies += development_dependencies).uniq! if development_dependencies
     end
-    plugins
+    new(opts)
   end
 
   def each
     context = eval 'binding'
-    @@templates[self.class.name].each_pair do |k, v|
-      yield k , ERB.new(v).result(context)
+    @@templates.values.each do |template|
+      template.each_pair do |k, v|
+        yield k, ERB.new(v).result(context)
+      end
     end
   end
 
